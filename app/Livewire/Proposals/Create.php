@@ -31,6 +31,9 @@ class Create extends Component
             ->updateOrCreate(['email' => $this->email],[
                 'hours' => $this->hours],
             );
+
+         $this->dispatch('proposal-created');
+         $this->modal = false;
     }
 
     public function render()

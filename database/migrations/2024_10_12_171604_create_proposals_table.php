@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Project;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->unsignedSmallInteger('hours');
-            $table->foreignIdFor(Project::Class)->constrained();
+
+            $table->unsignedBigInteger('project_id');
+            $table->foreign('project_id')->references('id')->on('projects');
+
             $table->timestamps();
         });
     }

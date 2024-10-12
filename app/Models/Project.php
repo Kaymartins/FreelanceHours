@@ -27,7 +27,7 @@ class Project extends Model
 
     public function proposals(): HasMany
     {
-        return $this->hasMany(Proposal::class, 'project_id', 'id');
+        return $this->hasMany(Proposal::class);
     }
 
     public function casts()

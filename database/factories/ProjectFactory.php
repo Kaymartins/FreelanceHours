@@ -22,7 +22,7 @@ class ProjectFactory extends Factory
             'description' => $this->faker->randomHtml(),
             'ends_at' => $this->faker->dateTimeBetween('now', '+3 days'),
             'status' => $this->faker->randomElement(['open', 'closed']),
-            'tech_stack' => $this->faker->randomElements(['react', 'php', 'vue', 'java', 'javascript', 'next', 'python'], random_int(1,5)),
+            'tech_stack' => $this->faker->randomElements(['react', 'nodejs', 'javascript', 'vite', 'nextjs'], random_int(1,5)),
         ];
     }
 }

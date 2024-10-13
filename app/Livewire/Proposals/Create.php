@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Proposals;
 
+
+use App\Actions\ArrangePositions;
 use App\Models\Project;
+use App\Models\Proposal;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 class Create extends Component
@@ -27,13 +31,36 @@ class Create extends Component
         }
 
         //verifica se email existe, se existir atualiza o registro, se nao cria novo
-         $this->project->proposals()
-            ->updateOrCreate(['email' => $this->email],[
-                'hours' => $this->hours],
-            );
+        DB::transaction(function () {
+            $proposal = $this->project->proposals()
+                ->updateOrCreate(['email' => $this->email],[
+                    'hours' => $this->hours],
+                );
+
+            $this->arrangePositions($proposal);
+        });
 
          $this->dispatch('proposal-created');
          $this->modal = false;
+    }
+
+    public function arrangePositions(Proposal $proposal)
+    {
+        $query = DB::select("
+            SELECT *, row_number() over (order by hours asc) as newPosition
+            from proposals
+            where project_id = :project
+            ", ['project' => $this->project->id]);
+
+        $position = collect($query)->where('id', '=', $proposal->id)->first();
+        $otherProposalInNewPosition = collect($query)->where('position', '=', $position->newPosition)->first();
+
+        if($otherProposalInNewPosition){
+            $proposal->update(['position_status' => 'up']);
+            Proposal::query()->where('id', $otherProposalInNewPosition->id)->update(['position_status' => 'down']);
+
+            ArrangePositions::run($proposal->project->id);
+        }
     }
 
     public function render()

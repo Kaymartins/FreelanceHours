@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class newProposal extends Notification
+class newProposal extends Notification implements ShouldQueue
 {
     use Queueable;
 
